@@ -31,6 +31,17 @@ const PostsContainer = () => {
 		}
 	};
 
+	const deletePost = (id: number) => {
+		axios
+			.delete(`http://localhost:4000/api/posts/${id}`)
+			.then((response) => {
+				if (response.status === 200) {
+					fetchposts(currentPage);
+				}
+			})
+			.catch((err) => console.log(err));
+	};
+
 	useEffect(() => {
 		fetchposts(currentPage);
 	}, [currentPage]);
@@ -46,8 +57,11 @@ const PostsContainer = () => {
 			setCurrentPage(currentPage + 1);
 		}
 	};
+
 	if (loading) return <div className="flex items-center justify-center">Loading ....</div>;
+
 	if (error) return <div className="flex items-center justify-center">Something went wrong!</div>;
+
 	return (
 		<div>
 			<div className="flex items-center justify-center h-[40px] mb-8">
@@ -63,7 +77,7 @@ const PostsContainer = () => {
 				/>
 				<button
 					className="bg-orange-600 hover:bg-orange-500 text-white h-full p-3 text-whiteh-full grid place-items-center rounded-r-md"
-					onClick={(e) => {
+					onClick={() => {
 						setCurrentPage(1);
 						fetchposts(currentPage, description);
 						setDescription("");
@@ -75,7 +89,7 @@ const PostsContainer = () => {
 			<div className="grid grid-cols-3 gap-4">
 				{posts.length > 0 ? (
 					posts.map((post: any, index: number) => {
-						return <NewsCard key={index} id={post.id} title={post.title} description={post.description} images={post.images} links={post.links} createdAt={post.createdAt} />;
+						return <NewsCard key={index} id={post.id} title={post.title} description={post.description} images={post.images} links={post.links} createdAt={post.createdAt} deletePost={deletePost} />;
 					})
 				) : (
 					<div className="flex items-center justify-center m-6">No posts.</div>

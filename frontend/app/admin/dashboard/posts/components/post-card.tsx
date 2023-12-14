@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
@@ -8,18 +9,10 @@ import { FaRegEdit } from "react-icons/fa";
 import { format } from "date-fns";
 import { FiClock } from "react-icons/fi";
 
-const NewsCard = ({ id, title, description, images, links, createdAt }: { id: number; title: string; description: string; images: string; links: string; createdAt: string }) => {
+const NewsCard = ({ id, title, description, images, links, createdAt, deletePost }: { id: number; title: string; description: string; images: string; links: string; createdAt: string; deletePost: Function }) => {
 	const router = useRouter();
 	const formattedDate = format(new Date(createdAt), "MMMM dd, yyyy");
-	const deletePost = (id: number) => {
-		axios
-			.delete(`http://localhost:4000/api/posts/${id}`)
-			.then((response) => {
-				router.refresh();
-				router.push("/admin/dashboard/posts");
-			})
-			.catch((err) => console.log(err));
-	};
+
 	return (
 		<div className="relative overflow-hidden bg-slate-100 rounded-sm">
 			<div className="flex gap-2 absolute right-1 top-1">

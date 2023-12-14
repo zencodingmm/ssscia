@@ -102,7 +102,7 @@ const News = () => {
 						const formattedDate = format(new Date(n.createdAt), "MMMM dd, yyyy HH:mm:ss");
 
 						return (
-							<div className="space-y-2 w-full" key={index}>
+							<div className="space-y-2 w-full my-3 shadow-sm" key={index}>
 								<div className="grid grid-cols-12 gap-5 border rounded p-4">
 									<div className="col-span-12 md:col-span-4 h-[150px]">
 										<Image src={`http://localhost:4000/uploads/posts/${n.images}`} width={200} height={150} alt="local news img " className="object-cover w-full h-full" />
