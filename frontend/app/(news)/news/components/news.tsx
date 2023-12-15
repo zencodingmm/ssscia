@@ -1,12 +1,12 @@
-"use client";
-import NewsNav from "@/components/news/newsNav";
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
-import axios from "axios";
-import { IoSearch } from "react-icons/io5";
-import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import { format } from 'date-fns';
+import axios from 'axios';
+import { IoSearch } from 'react-icons/io5';
+import { GrLinkNext, GrLinkPrevious } from 'react-icons/gr';
 
 const News = () => {
 	const [recentNews, setRecentNews] = useState([]);
@@ -16,17 +16,18 @@ const News = () => {
 	const [categories, setCategories] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
-	const [description, setDescription] = useState("");
+
 	function fetchPostByCategory(category_id: any) {
 		axios
 			.get(`http://localhost:4000/api/posts?cattype=1&category_id=${category_id}`)
 			.then((response) => {
-				console.log(response.data);
+				const { posts } = response.data;
+
 				setLoading(true);
-				setPosts(response.data.posts);
+				setPosts(posts);
 				setLoading(false);
 			})
-			.catch((err) => setError(true));
+			.catch(() => setError(true));
 	}
 
 	function fetchPost(page: number, description: any = false) {
@@ -38,42 +39,45 @@ const News = () => {
 		axios
 			.get(url)
 			.then((response) => {
-				console.log(response.data);
+				const { posts } = response.data;
+
 				setLoading(true);
 				setTotalPages(response.data.totalPages);
-				setPosts(response.data.posts);
+				setPosts(posts);
 				setLoading(false);
 			})
-			.catch((err) => setError(true));
+			.catch(() => setError(true));
 	}
+
 	function fetchRecentNews() {
 		axios
 			.get(`http://localhost:4000/api/posts?cattype=1`)
 			.then((response) => {
-				console.log(response.data);
+				const { posts } = response.data;
+
 				setLoading(true);
-				setRecentNews(response.data.posts);
+				setRecentNews(posts);
 				setLoading(false);
 			})
-			.catch((err) => setError(true));
+			.catch(() => setError(true));
 	}
 
 	function fetchCategory() {
 		axios
-			.get("http://localhost:4000/api/categories/news/type?type=1")
+			.get('http://localhost:4000/api/categories/news/type?type=1')
 			.then((response) => {
 				setLoading(true);
 				setCategories(response.data);
 				setLoading(false);
 			})
-			.catch((err) => setError(true));
+			.catch(() => setError(true));
 	}
 
 	useEffect(() => {
 		fetchCategory();
 		fetchPost(currentPage);
 		fetchRecentNews();
-	}, []);
+	}, [currentPage]);
 
 	useEffect(() => {
 		fetchPost(currentPage);
@@ -91,7 +95,8 @@ const News = () => {
 		}
 	};
 
-	if (error) return <div className="flex items-center justify-center text-red-700 p-6 m-6">Something went wrong!</div>;
+	if (error) return <div className="flex items-center justify-center text-red-700 p-6 m-6">Something went
+		wrong!</div>;
 	if (loading) return <div className="flex items-center justify-center p-6 m-6">Loading ...</div>;
 	return (
 		<div className="w-full px-0 md:px-10 lg:px-20 hoverflow-hidden flex flex-col lg:flex-row gap-6">
@@ -99,13 +104,15 @@ const News = () => {
 				{
 					// @ts-ignore
 					posts.map((n: any, index: number) => {
-						const formattedDate = format(new Date(n.createdAt), "MMMM dd, yyyy HH:mm:ss");
+						const formattedDate = format(new Date(n.createdAt), 'MMMM dd, yyyy HH:mm:ss');
 
 						return (
 							<div className="space-y-2 w-full my-3 shadow-sm" key={index}>
 								<div className="grid grid-cols-12 gap-5 border rounded p-4">
 									<div className="col-span-12 md:col-span-4 h-[150px]">
-										<Image src={`http://localhost:4000/uploads/posts/${n.images}`} width={200} height={150} alt="local news img " className="object-cover w-full h-full" />
+										<Image src={`http://localhost:4000/uploads/posts/${n.images}`} width={200}
+											   height={150} alt="local news img "
+											   className="object-cover w-full h-full" />
 									</div>
 
 									<div className="col-span-12 md:col-span-8">
@@ -119,7 +126,9 @@ const News = () => {
 										/>
 										<div className="flex justify-end mt-2">
 											<Link href={`/news/${n.id}`}>
-												<button className="bg-orange-600 hover:bg-orange-500 text-white py-2 px-4 rounded-sm text-xs">ပိုမိုသိရှိရန်..</button>
+												<button
+													className="bg-orange-600 hover:bg-orange-500 text-white py-2 px-4 rounded-sm text-xs">ပိုမိုသိရှိရန်..
+												</button>
 											</Link>
 										</div>
 									</div>
@@ -130,10 +139,12 @@ const News = () => {
 				}
 				{/* Pagination controls */}
 				<div className="flex items-center justify-center gap-4 mt-4">
-					<button className="border-2 rounded-full p-3 hover:bg-slate-400 disabled:bg-slate-700" onClick={handlePrevPage} disabled={currentPage === 1}>
+					<button className="border-2 rounded-full p-3 hover:bg-slate-400 disabled:bg-slate-700"
+							onClick={handlePrevPage} disabled={currentPage === 1}>
 						<GrLinkPrevious className="w-4 h-4" />
 					</button>
-					<button className="border-2 rounded-full p-3 hover:bg-slate-400 disabled:bg-slate-700" onClick={handleNextPage} disabled={currentPage === totalPages}>
+					<button className="border-2 rounded-full p-3 hover:bg-slate-400 disabled:bg-slate-700"
+							onClick={handleNextPage} disabled={currentPage === totalPages}>
 						<GrLinkNext className="w-4 h-4" />
 					</button>
 				</div>
@@ -145,7 +156,8 @@ const News = () => {
 						<h1 className="text-xl font-bold mb-2">သတင်းအချက်အလက်ရှာဖွေမည်</h1>
 						<div className="flex items-center w-full h-[40px] ">
 							<input type="text" className=" border w-10/12 h-full rounded-l-md outline-none p-2" />
-							<button className="bg-orange-600 hover:bg-orange-500 text-white w-2/12 h-full grid place-items-center rounded-r-md">
+							<button
+								className="bg-orange-600 hover:bg-orange-500 text-white w-2/12 h-full grid place-items-center rounded-r-md">
 								<IoSearch />
 							</button>
 						</div>
@@ -158,7 +170,8 @@ const News = () => {
 							) : (
 								categories.map((cat: any, idx: number) => {
 									return (
-										<Link href={""} key={idx} className="hover:text-orange-600 duration-300" onClick={() => fetchPostByCategory(cat.id)}>
+										<Link href={''} key={idx} className="hover:text-orange-600 duration-300"
+											  onClick={() => fetchPostByCategory(cat.id)}>
 											{cat.description}
 										</Link>
 									);
@@ -176,7 +189,9 @@ const News = () => {
 									return (
 										<div key={index} className="grid grid-cols-12 gap-2 items-center border p-2">
 											<div className="col-span-4 h-[60px] md:h-[80px] lg:h-[60px]">
-												<Image src={`http://localhost:4000/uploads/posts/${n.images}`} width={150} height={100} alt="local news img" className="object-cover w-full h-full" />
+												<Image src={`http://localhost:4000/uploads/posts/${n.images}`}
+													   width={150} height={100} alt="local news img"
+													   className="object-cover w-full h-full" />
 											</div>
 
 											<Link href={`/news/${n.id}`} className="col-span-8">
