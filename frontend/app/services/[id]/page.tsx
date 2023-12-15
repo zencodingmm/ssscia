@@ -1,15 +1,16 @@
-"use client";
-import axios from "axios";
-import { id } from "date-fns/locale";
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
-import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
+'use client';
+
+import axios from 'axios';
+import { id } from 'date-fns/locale';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import { format } from 'date-fns';
+import { GrLinkNext, GrLinkPrevious } from 'react-icons/gr';
 
 const ServiceCategoryPage = ({
-	params,
-}: {
+								 params,
+							 }: {
 	params: {
 		id: number;
 	};
@@ -26,13 +27,15 @@ const ServiceCategoryPage = ({
 		axios
 			.get(url)
 			.then((response) => {
+				const { posts, totalPages } = response.data;
+
 				setLoading(true);
-				setPosts(response.data.posts);
-				setTotalPages(response.data.totalPages);
+				setPosts(posts);
+				setTotalPages(totalPages);
 				setError(false);
 				setLoading(false);
 			})
-			.catch((err) => {
+			.catch(() => {
 				setError(true);
 			});
 	}
@@ -58,17 +61,18 @@ const ServiceCategoryPage = ({
 		axios
 			.get(`http://localhost:4000/api/posts?cattype=2&category_id=${category_id}`)
 			.then((response) => {
-				console.log(response.data);
+				const { posts } = response.data;
+
 				setLoading(true);
-				setPosts(response.data.posts);
+				setPosts(posts);
 				setLoading(false);
 			})
-			.catch((err) => setError(true));
+			.catch(() => setError(true));
 	}
 
 	function fetchCategory() {
 		axios
-			.get("http://localhost:4000/api/categories/news/type?type=2")
+			.get('http://localhost:4000/api/categories/news/type?type=2')
 			.then((response) => {
 				setLoading(true);
 				setCategories(response.data);
@@ -77,22 +81,26 @@ const ServiceCategoryPage = ({
 			.catch((err) => setError(true));
 	}
 
-	if (error) return <div className="flex justify-center items-center">No posts.</div>;
+	if (posts.length === 0) return <div className="flex justify-center items-center h-[50vh]">No posts.</div>;
+
 	if (loading) return <div className="flex justify-center items-center">Loading...</div>;
 
+
 	return (
-		<div className="w-full px-0 md:px-10 lg:px-20 hoverflow-hidden flex flex-col lg:flex-row gap-6">
+		<div className="w-full px-0 md:px-10 lg:px-20 overflow-hidden flex flex-col lg:flex-row gap-6">
 			<div className="w-full lg:w-8/12 shadow-xl rounded-md p-4 md:p-8 overflow-y-auto h-screen">
 				{
 					// @ts-ignore
 					posts.map((n: any, index: number) => {
-						const formattedDate = format(new Date(n.createdAt), "MMMM dd, yyyy HH:mm:ss");
+						const formattedDate = format(new Date(n.createdAt), 'MMMM dd, yyyy HH:mm:ss');
 
 						return (
 							<div className="space-y-2 w-full" key={index}>
 								<div className="grid grid-cols-12 gap-5 border rounded p-4">
 									<div className="col-span-12 md:col-span-4 h-[150px]">
-										<Image src={`http://localhost:4000/uploads/posts/${n.images}`} width={200} height={150} alt="local news img " className="object-cover w-full h-full" />
+										<Image src={`http://localhost:4000/uploads/posts/${n.images}`} width={200}
+											   height={150} alt="local news img "
+											   className="object-cover w-full h-full" />
 									</div>
 
 									<div className="col-span-12 md:col-span-8">
@@ -106,7 +114,9 @@ const ServiceCategoryPage = ({
 										/>
 										<div className="flex justify-end mt-2">
 											<Link href={`/news/${n.id}`}>
-												<button className="bg-orange-600 hover:bg-orange-500 text-white py-2 px-4 rounded-sm text-xs">ပိုမိုသိရှိရန်..</button>
+												<button
+													className="bg-orange-600 hover:bg-orange-500 text-white py-2 px-4 rounded-sm text-xs">ပိုမိုသိရှိရန်..
+												</button>
 											</Link>
 										</div>
 									</div>
@@ -117,10 +127,12 @@ const ServiceCategoryPage = ({
 				}
 				{/* Pagination controls */}
 				<div className="flex items-center justify-center gap-4 mt-4">
-					<button className="border-2 rounded-full p-3 hover:bg-slate-400 disabled:bg-slate-700" onClick={handlePrevPage} disabled={currentPage === 1}>
+					<button className="border-2 rounded-full p-3 hover:bg-slate-400 disabled:bg-slate-700"
+							onClick={handlePrevPage} disabled={currentPage === 1}>
 						<GrLinkPrevious className="w-4 h-4" />
 					</button>
-					<button className="border-2 rounded-full p-3 hover:bg-slate-400 disabled:bg-slate-700" onClick={handleNextPage} disabled={currentPage === totalPages}>
+					<button className="border-2 rounded-full p-3 hover:bg-slate-400 disabled:bg-slate-700"
+							onClick={handleNextPage} disabled={currentPage === totalPages}>
 						<GrLinkNext className="w-4 h-4" />
 					</button>
 				</div>
@@ -136,7 +148,8 @@ const ServiceCategoryPage = ({
 							) : (
 								categories.map((cat: any, idx: number) => {
 									return (
-										<Link href={""} key={idx} className="hover:text-orange-600 duration-300" onClick={() => fetchPostByCategory(cat.id)}>
+										<Link href={''} key={idx} className="hover:text-orange-600 duration-300"
+											  onClick={() => fetchPostByCategory(cat.id)}>
 											{cat.description}
 										</Link>
 									);
